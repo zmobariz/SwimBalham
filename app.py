@@ -18,8 +18,18 @@ import tkinter.font as tkfont
 from tkinter import TclError
 from datetime import timedelta
 
-APP_VERSION = "1.0.0"
+APP_VERSION = "1.0.1"
 SUPPORT_URL = "https://ko-fi.com/syrexeno"
+SUPPORT_MESSAGE = (
+    "Swim Balham helps you find an available swimming slot and alerts you when a "
+    "space opens, so you can spend less time checking timetables and more time "
+    "getting in the pool.\n\n"
+    "If the app has helped you secure a session, stay organised, or avoid missing "
+    "a swim, you can support its continued development by buying me a coffee.\n\n"
+    "Your support helps cover the cost of keeping the app running, improving "
+    "reminders, and making it even easier to find your next swim.\n\n"
+    "Enjoy your session — and thank you for supporting Swim Balham."
+)
 
 # Set Windows AppUserModelID so the taskbar shows our icon, not Python's.
 # This MUST be called before any Tkinter window is created.
@@ -265,6 +275,63 @@ class SettingsDialog(ctk.CTkToplevel):
         if self.on_save:
             self.on_save(self.result)
         self.destroy()
+
+
+class SupportDialog(ctk.CTkToplevel):
+    """Keep the project support message available from the main app."""
+
+    def __init__(self, master):
+        super().__init__(master)
+        self.title("Support Swim Balham")
+        self.geometry("520x470")
+        self.resizable(False, False)
+        self.configure(fg_color=C["bg"])
+        self.attributes("-topmost", True)
+        self.transient(master)
+        self.grab_set()
+
+        ctk.CTkLabel(
+            self,
+            text="Found your swim? Brilliant.",
+            font=ctk.CTkFont(family=FONT_DISPLAY, size=20, weight="bold"),
+            text_color=C["text"],
+            anchor="w",
+        ).pack(fill="x", padx=28, pady=(28, 10))
+
+        ctk.CTkLabel(
+            self,
+            text=SUPPORT_MESSAGE,
+            font=ctk.CTkFont(family=FONT_TEXT, size=13),
+            text_color=C["text_secondary"],
+            anchor="nw",
+            justify="left",
+            wraplength=464,
+        ).pack(fill="both", expand=True, padx=28)
+
+        buttons = ctk.CTkFrame(self, fg_color="transparent")
+        buttons.pack(fill="x", padx=28, pady=28, side="bottom")
+        ctk.CTkButton(
+            buttons,
+            text="☕ Buy me a coffee ↗",
+            font=ctk.CTkFont(family=FONT_TEXT, size=12, weight="bold"),
+            fg_color=C["warning"],
+            hover_color="#D97706",
+            text_color=C["bg"],
+            height=36,
+            corner_radius=10,
+            command=lambda: webbrowser.open(SUPPORT_URL),
+        ).pack(side="left", fill="x", expand=True, padx=(0, 6))
+        ctk.CTkButton(
+            buttons,
+            text="Close",
+            font=ctk.CTkFont(family=FONT_TEXT, size=12, weight="bold"),
+            fg_color=C["bg_surface2"],
+            hover_color=C["border"],
+            width=90,
+            height=36,
+            corner_radius=10,
+            command=self.destroy,
+        ).pack(side="left", padx=(6, 0))
 
 
 # ─── Virtualised List (Canvas-based) ──────────────────────────────────────
@@ -660,6 +727,13 @@ class App(ctk.CTk):
             command=self._open_settings)
         self.settings_btn.pack(side="right", padx=(0, 8))
 
+        self.support_btn = ctk.CTkButton(
+            header, text="☕ Support", font=ctk.CTkFont(family=FONT_TEXT, size=11, weight="bold"),
+            fg_color=C["warning"], hover_color="#D97706", text_color=C["bg"],
+            width=88, height=28, corner_radius=8,
+            command=self._open_support)
+        self.support_btn.pack(side="right", padx=(0, 8))
+
         self.refresh_btn = ctk.CTkButton(
             header, text="↻ Refresh", font=ctk.CTkFont(family=FONT_TEXT, size=10, weight="bold"),
             fg_color=C["primary"], hover_color=C["primary_hover"], width=80, height=28, corner_radius=8,
@@ -914,6 +988,9 @@ class App(ctk.CTk):
     def _open_settings(self):
         SettingsDialog(self, self.settings, on_save=self._on_settings_saved)
 
+    def _open_support(self):
+        SupportDialog(self)
+
     def _on_settings_saved(self, new_settings):
         self.settings = new_settings
         ri = new_settings.get("refresh_interval_minutes", 5)
@@ -977,17 +1054,7 @@ class App(ctk.CTk):
                      font=ctk.CTkFont(family=FONT_TEXT, size=13),
                      text_color=C["success"], anchor="w", justify="left").pack(fill="x", padx=16, pady=14)
 
-        message = (
-            "Swim Balham helps you find an available swimming slot and alerts you when a "
-            "space opens, so you can spend less time checking timetables and more time "
-            "getting in the pool.\n\n"
-            "If the app has helped you secure a session, stay organised, or avoid missing "
-            "a swim, you can support its continued development by buying me a coffee.\n\n"
-            "Your support helps cover the cost of keeping the app running, improving "
-            "reminders, and making it even easier to find your next swim.\n\n"
-            "Enjoy your session — and thank you for supporting Swim Balham."
-        )
-        ctk.CTkLabel(win, text=message,
+        ctk.CTkLabel(win, text=SUPPORT_MESSAGE,
                      font=ctk.CTkFont(family=FONT_TEXT, size=12),
                      text_color=C["text_secondary"], anchor="nw", justify="left",
                      wraplength=470).pack(fill="both", expand=True, padx=24)

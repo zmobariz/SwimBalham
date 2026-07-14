@@ -85,6 +85,8 @@ Found your swim? Brilliant.
 
 If Swim Balham has helped you secure a session, stay organised, or avoid missing a swim, you can support its continued development by [buying me a coffee](https://ko-fi.com/syrexeno).
 
+The app includes a permanent **☕ Support** button in its header, as well as a **Buy me a coffee** button in availability-reminder popups.
+
 Your support helps cover the cost of keeping the app running, improving reminders, and making it even easier to find your next swim.
 
 Enjoy your session — and thank you for supporting Swim Balham.
