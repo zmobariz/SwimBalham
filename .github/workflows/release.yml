@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+jobs:
+  build-release:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Run tests
+        run: python -m unittest discover -s tests -v
+
+      - name: Build portable executable
+        run: pyinstaller --noconfirm --clean build.spec
+
+      - name: Create SHA-256 checksum
+        shell: pwsh
+        run: |
+          $hash = (Get-FileHash -Algorithm SHA256 -LiteralPath 'dist\SwimBalham.exe').Hash.ToLowerInvariant()
+          "$hash  SwimBalham.exe" | Set-Content -Encoding ascii -NoNewline 'dist\SHA256SUMS.txt'
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v4
+        with:
+          subject-path: dist/SwimBalham.exe
+
+      - name: Create GitHub release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create $env:GITHUB_REF_NAME `
+            'dist\SwimBalham.exe' `
+            'dist\SHA256SUMS.txt' `
+            --repo $env:GITHUB_REPOSITORY `
+            --verify-tag `
+            --generate-notes `
+            --title "Swim Balham $env:GITHUB_REF_NAME"
