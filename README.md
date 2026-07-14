@@ -29,6 +29,8 @@ The app must remain running for this reminder to work. Swim Balham does not rese
 
 Swim Balham has no accounts, analytics, advertising, or telemetry. It makes network requests only to obtain timetable data and open booking/support pages you choose.
 
+See the full [Privacy Policy](PRIVACY.md) for the services contacted by the app and the data stored locally.
+
 Settings and cached timetable data are stored for the current Windows user in:
 
 ```text
@@ -64,6 +66,12 @@ pyinstaller --noconfirm --clean build.spec
 The executable is created at `dist\SwimBalham.exe`. The PyInstaller configuration explicitly uses a standard `asInvoker` manifest (`uac_admin=False`), so Windows does not request elevation.
 
 GitHub Actions builds release artifacts and generates a SHA-256 checksum and a GitHub artifact attestation. An attestation proves which public workflow and commit produced a file; it is separate from Windows Authenticode publisher signing.
+
+## Code signing
+
+The project is applying to the SignPath Foundation open-source program. The current `v1.0.0` executable is unsigned. If the application is approved, future release binaries will use **free code signing provided by SignPath.io, certificate by SignPath Foundation**.
+
+See the [Code Signing Policy](CODE_SIGNING_POLICY.md) for the release process, project roles, and privacy commitments.
 
 ## Data attribution and disclaimer
 
