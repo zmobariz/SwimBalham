@@ -18,7 +18,7 @@ import tkinter.font as tkfont
 from tkinter import TclError
 from datetime import timedelta
 
-APP_VERSION = "1.0.1"
+APP_VERSION = "1.0.2"
 SUPPORT_URL = "https://ko-fi.com/syrexeno"
 SUPPORT_MESSAGE = (
     "Swim Balham helps you find an available swimming slot and alerts you when a "
